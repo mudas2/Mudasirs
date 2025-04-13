@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SliceofTest - Pizza & More</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+    body {
+      background: #fdfdfd; color: #333;
+    }
+    header {
+      background: linear-gradient(90deg, #e60000, #ff4d4d);
+      color: white; padding: 20px; text-align: center;
+    }
+    nav {
+      background: #fff; padding: 15px 30px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 1000;
+    }
+    .nav-left {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-left h2 {
+      font-size: 26px; color: #e60000;
+    }
+    .nav-links {
+      display: flex; gap: 20px; flex-wrap: wrap;
+    }
+    .nav-links a {
+      text-decoration: none; color: #333;
+      font-weight: bold; position: relative;
+    }
+    .nav-links a::after {
+      content: ""; position: absolute;
+      width: 0%; height: 2px; bottom: -3px; left: 0;
+      background-color: #e60000; transition: 0.3s;
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .nav-right {
+      display: flex; align-items: center; gap: 20px;
+    }
+    .nav-right select {
+      padding: 8px; border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .cart-icon {
+      position: relative; cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .cart-icon:hover {
+      transform: scale(1.1);
+    }
+    .cart-icon span {
+      position: absolute; top: -10px; right: -10px;
+      background: red; color: white; border-radius: 50%;
+      padding: 3px 7px; font-size: 12px;
+    }
+    .menu, .deals {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px; padding: 20px;
+    }
+    .item {
+      background: white; border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 15px; transition: transform 0.2s;
+    }
+    .item:hover {
+      transform: translateY(-5px);
+    }
+    .item img {
+      width: 100%; border-radius: 10px;
+    }
+    .item h3 {
+      margin: 10px 0; font-size: 18px;
+    }
+    .item p {
+      color: #888;
+    }
+    .item button {
+      background: #e60000; color: white; border: none;
+      padding: 10px 15px; border-radius: 5px;
+      margin-top: 10px; transition: background 0.3s;
+    }
+    .item button:hover {
+      background: #b30000;
+    }
+    .cart-panel {
+      position: fixed; top: 0; right: -400px;
+      width: 300px; height: 100vh; background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+      padding: 20px; transition: right 0.4s ease-in-out;
+      overflow-y: auto; z-index: 2000;
+    }
+    .cart-panel.active {
+      right: 0;
+    }
+    .cart-panel h2 {
+      margin-bottom: 10px;
+    }
+    .cart-panel ul {
+      list-style: none; padding-left: 0;
+    }
+    .cart-panel li {
+      margin-bottom: 8px; font-size: 14px;
+    }
+    .cart-panel .total {
+      font-weight: bold; margin-top: 10px;
+    }
+    .cart-panel button {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background: #e60000;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart-panel button:hover {
+      background: #b30000;
+    }
+    footer {
+      text-align: center;
+      background: #222; color: white;
+      padding: 15px; margin-top: 30px;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        flex-direction: column;
+        width: 100%;
+        display: none;
+      }
+      .nav-links.mobile-visible {
+        display: flex;
+      }
+      .menu-toggle {
+        display: block; cursor: pointer;
+      }
+    }
+    .menu-toggle {
+      display: none;
+      font-size: 24px; margin-left: auto;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SliceofTaste</h1>
+    <p>Delicious moments delivered!</p>
+  </header>  <nav>
+    <div class="nav-left">
+      <img src="https://cdn-icons-png.flaticon.com/512/3132/3132693.png" width="40" />
+      <h2>Slice</h2>
+    </div>
+    <div class="menu-toggle" onclick="toggleMenu()">&#9776;</div>
+    <div class="nav-links" id="navLinks">
+      <a href="#">Home</a>
+      <a href="#menuItems">Menu</a>
+      <a href="#deals">Deals</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right">
+      <select id="categorySelect" onchange="filterItems()">
+        <option value="all">All</option>
+        <option value="pizza">Pizza</option>
+        <option value="drink">Drinks</option>
+        <option value="dessert">Desserts</option>
+      </select>
+      <div class="cart-icon" onclick="toggleCart()">
+        <img src="https://cdn-icons-png.flaticon.com/512/1170/1170678.png" width="30" />
+        <span id="cartCount">0</span>
+      </div>
+    </div>
+  </nav>  <div class="menu" id="menuItems"></div>  <section class="deals" id="deals">
+    <div class="item">
+      <img src="https://via.placeholder.com/250x150" alt="Deal 1" />
+      <h3>Family Feast Combo</h3>
+      <p>2 Large Pizzas + 1.5L Drink</p>
+      <p><s>Rs. 1800</s> <strong>Rs. 1500</strong> - Limited Offer!</p>
+      <button>Add to Cart</button>
+    </div>
+    <div class="item">
+      <img src="https://via.placeholder.com/250x150" alt="Deal 2" />
+      <h3>Sweet Tooth Delight</h3>
+      <p>Chocolate Cake + Vanilla Ice Cream</p>
+      <p><s>Rs. 220</s> <strong>Rs. 180</strong> - Today Only!</p>
+      <button>Add to Cart</button>
+    </div>
+  </section>  <div class="cart-panel" id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cartList"></ul>
+    <p class="total">Total: Rs. <span id="totalPrice">0</span></p>
+    <button onclick="clearCart()">Order Summary</button>
+  </div>  <footer id="contact">
+    &copy; 2025 SliceHub. All Rights Reserved.
+  </footer>  <script>
+    const items = [
+      { name: "Pepperoni Pizza", price: 700, category: "pizza", img: "https://via.placeholder.com/250x150" },
+      { name: "Chicken Tikka Pizza", price: 650, category: "pizza", img: "https://via.placeholder.com/250x150" },
+      { name: "Veggie Pizza", price: 600, category: "pizza", img: "https://via.placeholder.com/250x150" },
+      { name: "Coke 500ml", price: 80, category: "drink", img: "https://via.placeholder.com/250x150" },
+      { name: "Sprite 500ml", price: 80, category: "drink", img: "https://via.placeholder.com/250x150" },
+      { name: "Chocolate Cake Slice", price: 120, category: "dessert", img: "https://via.placeholder.com/250x150" },
+      { name: "Vanilla Ice Cream", price: 100, category: "dessert", img: "https://via.placeholder.com/250x150" }
+    ];
+
+    const menu = document.getElementById("menuItems");
+    const cartList = document.getElementById("cartList");
+    const totalPrice = document.getElementById("totalPrice");
+    const cartCount = document.getElementById("cartCount");
+    const cartPanel = document.getElementById("cart");
+    const navLinks = document.getElementById("navLinks");
+    let cart = [];
+
+    function displayItems(filter = "all") {
+      menu.innerHTML = "";
+      const filtered = filter === "all" ? items : items.filter(i => i.category === filter);
+      filtered.forEach((item, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}" />
+          <h3>${item.name}</h3>
+          <p>Rs. ${item.price}</p>
+          <button onclick="addToCart(${i})">Add to Cart</button>
+        `;
+        menu.appendChild(div);
+      });
+    }
+
+    function addToCart(index) {
+      const item = items[index];
+      cart.push(item);
+      updateCart();
+    }
+
+    function updateCart() {
+      cartList.innerHTML = "";
+      let total = 0;
+      cart.forEach((item) => {
+        total += item.price;
+        const li = document.createElement("li");
+        li.textContent = `${item.name} - Rs. ${item.price}`;
+        cartList.appendChild(li);
+      });
+      totalPrice.textContent = total;
+      cartCount.textContent = cart.length;
+    }
+
+    function toggleCart() {
+      cartPanel.classList.toggle("active");
+    }
+
+    function clearCart() {
+      alert("Order Placed! Thank you.");
+      cart = [];
+      updateCart();
+      cartPanel.classList.remove("active");
+    }
+
+    function filterItems() {
+      const cat = document.getElementById("categorySelect").value;
+      displayItems(cat);
+    }
+
+    function toggleMenu() {
+      navLinks.classList.toggle("mobile-visible");
+    }
+
+    displayItems();
+  </script></body>
+</html>
